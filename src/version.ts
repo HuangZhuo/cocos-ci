@@ -1,11 +1,12 @@
 import { readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
-import { program } from 'commander';
 
 type VersionConfig = {
     filePath: string;
     fieldPath: string;
 };
+
+type SemiverType = 'major' | 'minor' | 'patch';
 
 function loadConfig(): VersionConfig {
     const configPath = join(__dirname, '../creator-config.json');
@@ -28,7 +29,7 @@ function getVersion(config: VersionConfig): string {
     return current;
 }
 
-function bumpVersion(config: VersionConfig, type: 'major' | 'minor' | 'patch'): void {
+function bumpVersion(config: VersionConfig, type: SemiverType): void {
     const content = JSON.parse(readFileSync(config.filePath, 'utf-8'));
     const pathParts = config.fieldPath.split('.');
 
@@ -82,7 +83,7 @@ function show() {
     }
 }
 
-function bump(type: 'major' | 'minor' | 'patch' = 'patch') {
+function bump(type: SemiverType = 'patch') {
     try {
         if (!['major', 'minor', 'patch'].includes(type)) {
             throw new Error('Invalid bump type. Must be one of: major, minor, patch');
@@ -102,12 +103,11 @@ function bump(type: 'major' | 'minor' | 'patch' = 'patch') {
 
 export const version = {
     description: '版本管理',
-    handleCommand: () => {
-        const options = program.opts();
-        if (options.show) {
+    handleCommand: (action: string, options: { type?: SemiverType }) => {
+        if (action === 'show') {
             show();
-        } else if (options.bump) {
-            bump(options.bump ?? 'patch');
+        } else if (action === 'bump') {
+            bump(options.type ?? 'patch');
         } else {
             show();
         }

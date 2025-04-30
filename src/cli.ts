@@ -17,10 +17,9 @@ program
 program
     .command('version')
     .description(version.description)
-    .option('-s, --show', '显示当前版本')
-    .option('-b, --bump <type>', '升级版本号', 'patch')
-    .option('-v, --verbose', '显示详细输出')
-    .action(version.handleCommand);
+    .argument('[action]', 'version操作 (show|bump)', 'show')
+    .option('--type <type>', '当action为bump时指定版本类型', 'patch')
+    .action((action, options) => version.handleCommand(action, options));
 
 // 如果没有参数则显示帮助
 if (process.argv.length < 3) {
