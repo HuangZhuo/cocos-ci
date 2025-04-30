@@ -1,0 +1,24 @@
+{
+  "name": "hot-update",
+  "version": "1.0.0",
+  "bin": {
+    "hot-update": "./dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test-cli": "tsc && node ./dist/cli.js",
+    "debug": "ts-node ./src/cli.ts version"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.12",
+    "@types/node": "^22.15.3",
+    "commander": "^13.1.0",
+    "jest": "^29.7.0",
+    "prettier": "^3.5.3",
+    "ts-jest": "^29.1.1"
+  },
+  "keywords": [],
+  "author": "Joezme",
+  "license": "ISC",
+  "description": "Export hot-update patch files"
+}
