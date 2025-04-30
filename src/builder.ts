@@ -1,6 +1,6 @@
-import { spawn } from 'child_process';
-import { ICommandHandler } from './types';
+import { exec, spawn } from 'child_process';
 import { loadConfig } from './common';
+import { ICommandHandler } from './types';
 
 /**
  * 命令行构建Cocos Creator项目
@@ -65,10 +65,26 @@ function build(platform?: string): Promise<void> {
     });
 }
 
+function preview(platform?: string): void {
+    const config = loadConfig();
+    const targetPlatform = platform || config.defaultPlatform;
+    const platformConfig = config.availablePlatforms[targetPlatform];
+
+    if (!platformConfig?.previewUrl) {
+        throw new Error(`平台 ${targetPlatform} 未配置previewUrl`);
+    }
+
+    console.log(`正在打开预览: ${platformConfig.previewUrl}`);
+    exec(`start ${platformConfig.previewUrl}`);
+}
+
 export const builder: ICommandHandler = {
     description: '构建Cocos Creator项目',
     handleCommand: (action: string, options: { platform: string }) => {
-        console.log('builder', options.platform);
-        // build(options.platform);
+        if (action === 'build') {
+            build(options.platform);
+        } else if (action === 'preview') {
+            preview(options.platform);
+        }
     },
 };

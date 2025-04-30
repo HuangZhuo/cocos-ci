@@ -1,8 +1,8 @@
 import { program } from 'commander';
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import { version } from './version';
 import { builder } from './builder';
+import { version } from './version';
 
 const packageJsonPath = join(__dirname, '..', 'package.json');
 const packageJsonContent = JSON.parse(readFileSync(packageJsonPath, 'utf8'));
@@ -30,6 +30,12 @@ program
     .action((options) => builder.handleCommand('build', options));
 
 // 如果没有参数则显示帮助
+program
+    .command('preview')
+    .description('预览构建结果')
+    .option('--platform <platform>', '指定预览平台', 'web-desktop')
+    .action((options) => builder.handleCommand('preview', options));
+
 if (process.argv.length < 3) {
     program.help();
 }
