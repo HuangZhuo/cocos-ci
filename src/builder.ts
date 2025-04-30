@@ -1,12 +1,6 @@
 import { spawn } from 'child_process';
-import { readFileSync } from 'fs';
-import { join } from 'path';
-import { CreatorConfig, ICommandHandler } from './types';
-
-function loadConfig(): CreatorConfig {
-    const configPath = join(__dirname, '../creator-config.json');
-    return JSON.parse(readFileSync(configPath, 'utf-8'));
-}
+import { ICommandHandler } from './types';
+import { loadConfig } from './common';
 
 /**
  * 命令行构建Cocos Creator项目

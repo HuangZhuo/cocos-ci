@@ -13,6 +13,7 @@ export type SemiverType = 'major' | 'minor' | 'patch';
 interface PlatformConfig {
     configPath: string;
     outputName: string;
+    previewUrl?: string;
 }
 
 export interface CreatorConfig {
@@ -20,4 +21,5 @@ export interface CreatorConfig {
     projectPath: string;
     defaultPlatform: string;
     availablePlatforms: Record<string, PlatformConfig>;
+    version: VersionConfig;
 }

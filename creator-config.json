@@ -9,7 +9,8 @@
         },
         "web-desktop": {
             "outputName": "web-desktop",
-            "configPath": "C:\\Users\\idora\\Projects\\wm_diner\\client\\tools\\build\\buildConfig_web-desktop.json"
+            "configPath": "C:\\Users\\idora\\Projects\\wm_diner\\client\\tools\\build\\buildConfig_web-desktop.json",
+            "previewUrl": "http://localhost:7456/web-desktop/web-desktop/index.html"
         }
     },
     "version": {

@@ -1,12 +1,6 @@
 import { readFileSync, writeFileSync } from 'fs';
-import { join } from 'path';
 import { ICommandHandler, SemiverType, VersionConfig } from './types';
-
-function loadConfig(): VersionConfig {
-    const configPath = join(__dirname, '../creator-config.json');
-    const config = JSON.parse(readFileSync(configPath, 'utf-8'));
-    return config.version;
-}
+import { loadConfig } from './common';
 
 function getVersion(config: VersionConfig): string {
     const content = JSON.parse(readFileSync(config.filePath, 'utf-8'));
@@ -64,7 +58,7 @@ function bumpVersion(config: VersionConfig, type: SemiverType): void {
 
 function show() {
     try {
-        const config = loadConfig();
+        const config = loadConfig().version;
         const version = getVersion(config);
         console.log(`Current version: ${version}`);
     } catch (error: unknown) {
@@ -84,7 +78,7 @@ function bump(type: SemiverType = 'patch') {
         }
 
         const config = loadConfig();
-        bumpVersion(config, type);
+        bumpVersion(config.version, type);
     } catch (error: unknown) {
         if (error instanceof Error) {
             console.error(error.message);
