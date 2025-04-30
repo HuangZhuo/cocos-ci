@@ -2,6 +2,7 @@ import { program } from 'commander';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import { version } from './version';
+import { builder } from './builder';
 
 const packageJsonPath = join(__dirname, '..', 'package.json');
 const packageJsonContent = JSON.parse(readFileSync(packageJsonPath, 'utf8'));
@@ -20,6 +21,13 @@ program
     .argument('[action]', 'version操作 (show|bump)', 'show')
     .option('--type <type>', '当action为bump时指定版本类型', 'patch')
     .action((action, options) => version.handleCommand(action, options));
+
+// 在version命令后添加build命令
+program
+    .command('build')
+    .description(builder.description)
+    .option('--platform <platform>', '指定构建平台', 'web-desktop')
+    .action((options) => builder.handleCommand('build', options));
 
 // 如果没有参数则显示帮助
 if (process.argv.length < 3) {

@@ -1,12 +1,6 @@
 import { readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
-
-type VersionConfig = {
-    filePath: string;
-    fieldPath: string;
-};
-
-type SemiverType = 'major' | 'minor' | 'patch';
+import { ICommandHandler, SemiverType, VersionConfig } from './types';
 
 function loadConfig(): VersionConfig {
     const configPath = join(__dirname, '../creator-config.json');
@@ -101,7 +95,7 @@ function bump(type: SemiverType = 'patch') {
     }
 }
 
-export const version = {
+export const version: ICommandHandler = {
     description: '版本管理',
     handleCommand: (action: string, options: { type?: SemiverType }) => {
         if (action === 'show') {
