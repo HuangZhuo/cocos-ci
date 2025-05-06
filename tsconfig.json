@@ -8,5 +8,6 @@
     "rootDir": "./src",
     "outDir": "./dist",
     "skipLibCheck": true,
+    "noEmit": true, // 添加这行，因为esbuild会处理输出
   }
 }
