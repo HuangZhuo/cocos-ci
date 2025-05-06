@@ -1,8 +1,8 @@
 {
-  "name": "hot-update",
+  "name": "cocos-ci",
   "version": "1.0.0",
   "bin": {
-    "hot-update": "./dist/cli.js"
+    "cocos-ci": "./dist/cli.js"
   },
   "scripts": {
     "build": "tsc",
@@ -11,7 +11,7 @@
   },
   "devDependencies": {
     "@types/jest": "^29.5.12",
-    "@types/node": "^22.15.3",
+    "@types/node": "^22.15.11",
     "commander": "^13.1.0",
     "jest": "^29.7.0",
     "prettier": "^3.5.3",
@@ -20,5 +20,5 @@
   "keywords": [],
   "author": "Joezme",
   "license": "ISC",
-  "description": "Export hot-update patch files"
+  "description": "Cocos Creator CI Tools"
 }

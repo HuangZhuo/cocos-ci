@@ -4,3 +4,4 @@ version 代码版本
 build 构建
 preview 预览
 publish 发布
+hotupdate 热更新

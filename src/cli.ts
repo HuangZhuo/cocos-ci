@@ -12,7 +12,7 @@ program
     .version(cliVersion)
     .name('hot-update')
     .usage('<command> [options]')
-    .description('热更新工具命令行界面');
+    .description('Cocos Creator CI Tools');
 
 // 添加version命令
 program
@@ -29,13 +29,13 @@ program
     .option('--platform <platform>', '指定构建平台', 'web-desktop')
     .action((options) => builder.handleCommand('build', options));
 
-// 如果没有参数则显示帮助
 program
     .command('preview')
     .description('预览构建结果')
     .option('--platform <platform>', '指定预览平台', 'web-desktop')
     .action((options) => builder.handleCommand('preview', options));
 
+// 如果没有参数则显示帮助
 if (process.argv.length < 3) {
     program.help();
 }
