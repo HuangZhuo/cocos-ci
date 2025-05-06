@@ -1,6 +1,6 @@
 export interface ICommandHandler {
     description: string;
-    handleCommand: (action: string, options: any) => void;
+    handleCommand: (action: string, options: any) => void | Promise<void>;
 }
 
 export type VersionConfig = {
@@ -14,6 +14,7 @@ interface PlatformConfig {
     configPath: string;
     outputName: string;
     previewUrl?: string;
+    publishCmd?: string;
 }
 
 export interface CreatorConfig {

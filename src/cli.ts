@@ -2,6 +2,7 @@ import { program } from 'commander';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import { builder } from './builder';
+import { publisher } from './publish';
 import { version } from './version';
 
 const packageJsonPath = join(__dirname, '..', 'package.json');
@@ -29,15 +30,23 @@ program
     .option('--platform <platform>', '指定构建平台', 'web-desktop')
     .action((options) => builder.handleCommand('build', options));
 
+// 预览
 program
     .command('preview')
     .description('预览构建结果')
     .option('--platform <platform>', '指定预览平台', 'web-desktop')
     .action((options) => builder.handleCommand('preview', options));
 
+// 添加publish命令
+program
+    .command('publish')
+    .description(publisher.description)
+    .option('--platform <platform>', '指定发布平台', 'web-desktop')
+    .option('--dry-run', '不实际发布，仅打印命令', false)
+    .action((options) => publisher.handleCommand('publish', options));
+
 // 如果没有参数则显示帮助
 if (process.argv.length < 3) {
     program.help();
 }
-
 program.parse(process.argv);

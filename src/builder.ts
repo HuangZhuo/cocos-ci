@@ -80,9 +80,9 @@ function preview(platform?: string): void {
 
 export const builder: ICommandHandler = {
     description: '构建Cocos Creator项目',
-    handleCommand: (action: string, options: { platform: string }) => {
+    handleCommand: async (action: string, options: { platform: string }) => {
         if (action === 'build') {
-            build(options.platform);
+            await build(options.platform);
         } else if (action === 'preview') {
             preview(options.platform);
         }

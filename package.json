@@ -7,7 +7,7 @@
   "scripts": {
     "build": "tsc",
     "test-cli": "tsc && node ./dist/cli.js",
-    "debug": "ts-node ./src/cli.ts version"
+    "debug": "ts-node ./src/cli.ts publish --platform web-mobile"
   },
   "devDependencies": {
     "@types/jest": "^29.5.12",
@@ -20,5 +20,8 @@
   "keywords": [],
   "author": "Joezme",
   "license": "ISC",
-  "description": "Cocos Creator CI Tools"
+  "description": "Cocos Creator CI Tools",
+  "dependencies": {
+    "iconv-lite": "^0.6.3"
+  }
 }
