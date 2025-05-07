@@ -2,6 +2,7 @@ import { program } from 'commander';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import { builder } from './builder';
+import { hotupdate } from './hotupdate';
 import { publisher } from './publish';
 import { version } from './version';
 
@@ -45,7 +46,15 @@ program
     .option('--dry-run', '不实际发布，仅打印命令', false)
     .action((options) => publisher.handleCommand('publish', options));
 
-// 如果没有参数则显示帮助
+// 添加hotupdate命令
+program
+    .command('hotupdate')
+    .description('热更新管理')
+    .argument('<action>', '热更新操作 (generate|upload)')
+    .option('--platform <platform>', '指定平台', 'web-desktop')
+    .action((action, options) => hotupdate.handleCommand(action, options));
+
+// 如果没有任何参数，则显示帮助
 if (process.argv.length < 3) {
     program.help();
 }

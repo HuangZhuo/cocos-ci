@@ -1,6 +1,6 @@
 {
   "name": "cocos-ci",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "bin": {
     "cocos-ci": "./dist/cli.js"
   },
@@ -8,7 +8,7 @@
     "type-check": "tsc --noEmit",
     "build": "node esbuild.config.js",
     "test-cli": "node esbuild.config.js && node ./dist/cli.js",
-    "debug": "ts-node ./src/cli.ts publish --platform web-mobile"
+    "debug": "ts-node ./src/cli.ts hotupdate generate --platform web-mobile"
   },
   "devDependencies": {
     "@types/jest": "^29.5.12",
