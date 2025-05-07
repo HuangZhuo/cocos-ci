@@ -3,6 +3,7 @@ import { readFileSync } from 'fs';
 import { join } from 'path';
 import { builder } from './builder';
 import { hotupdate } from './hotupdate';
+import { init } from './init';
 import { publisher } from './publish';
 import { version } from './version';
 
@@ -15,6 +16,12 @@ program
     .name('hot-update')
     .usage('<command> [options]')
     .description('Cocos Creator CI Tools');
+
+// 添加init命令
+program
+    .command('init')
+    .description('初始化cocos-ci配置文件')
+    .action(() => init.handleCommand('', null));
 
 // 添加version命令
 program

@@ -1,4 +1,3 @@
-import { builder } from './builder';
 import { isNativePlatform, loadBuildConfig, loadConfig } from './common';
 import { ICommandHandler } from './types';
 
@@ -15,7 +14,10 @@ async function generate(platform: string): Promise<void> {
         throw new Error(`不支持的非原生平台: ${platform}`);
     }
 
-    await builder.handleCommand('build', { platform });
+    console.log(
+        `当前构建次数: ${buildConfig.packages['oops-plugin-hot-update'].hotUpdateBuildNum}`,
+    );
+    // await builder.handleCommand('build', { platform });
 }
 
 async function upload(platform: string): Promise<void> {
