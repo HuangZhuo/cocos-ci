@@ -7,7 +7,6 @@
   "scripts": {
     "type-check": "tsc --noEmit",
     "build": "node esbuild.config.js",
-    "test-cli": "node esbuild.config.js && node ./dist/cli.js",
     "debug": "ts-node ./src/cli.ts hotupdate generate --platform web-mobile"
   },
   "devDependencies": {
@@ -22,7 +21,7 @@
   "keywords": [],
   "author": "Joezme",
   "license": "ISC",
-  "description": "Cocos Creator CI Tools",
+  "description": "Command-line tools for Cocos Creator CI/CD pipeline",
   "dependencies": {
     "iconv-lite": "^0.6.3"
   }

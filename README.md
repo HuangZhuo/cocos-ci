@@ -7,5 +7,17 @@
 - preview 预览
 - publish 发布
 - hotupdate 热更新
-    - generate 生成热更新清单
-    - upload 上传热更新资源
+    - generate 生成
+    - upload 上传
+
+## Setup
+
+```bash
+pnpm i
+npm run build
+npm link
+```
+
+## Usage
+
+#todo
