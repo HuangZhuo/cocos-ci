@@ -2,6 +2,8 @@
 
 - init 初始化配置文件
 - version 代码版本
+    - show 显示版本
+    - bump 更新版本
 - build 构建
 - preview 预览
 - publish 发布

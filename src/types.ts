@@ -17,7 +17,7 @@ type PlatformConfig = {
     publishCmd?: string;
 };
 
-export type CreatorConfig = {
+export type CocosCIConfig = {
     creatorPath: string;
     projectPath: string;
     defaultPlatform: string;
@@ -40,3 +40,11 @@ export type BuildConfig = {
 };
 
 export type BuildPlatform = 'android' | 'ios' | 'web-desktop' | 'web-mobile';
+
+export type CocosProjectConfig = {
+    name: string;
+    description: string;
+    creator: {
+        version: string;
+    };
+};

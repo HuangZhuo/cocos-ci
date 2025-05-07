@@ -1,8 +1,8 @@
 import { existsSync, readFileSync } from 'fs';
 import { join } from 'path/posix';
-import { BuildConfig, BuildPlatform, CreatorConfig } from './types';
+import { BuildConfig, BuildPlatform, CocosCIConfig, CocosProjectConfig } from './types';
 
-export function loadConfig(): CreatorConfig {
+export function loadConfig(): CocosCIConfig {
     const configPath = join(__dirname, '../cocos-ci.json');
     return JSON.parse(readFileSync(configPath, 'utf-8'));
 }
@@ -13,6 +13,11 @@ export function loadBuildConfig(buildConfigPath: string): BuildConfig {
 
 export function saveBuildConfig(buildConfigPath: string, config: BuildConfig): void {
     // const content = JSON.stringify(config, null, 2);
+}
+
+export function loadProjectConfig(projectPath: string): CocosProjectConfig {
+    const configPath = join(projectPath, 'package.json');
+    return JSON.parse(readFileSync(configPath, 'utf-8')) as CocosProjectConfig;
 }
 
 export function isNativePlatform(platform: BuildPlatform): boolean {
