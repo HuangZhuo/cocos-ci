@@ -12,12 +12,16 @@ const templateConfig: CocosCIConfig = {
         'web-mobile': {
             outputName: 'web-mobile',
             configPath: 'path\\to\\buildConfig_web-mobile.json',
-            previewUrl: 'http://localhost:7456/web-mobile/index.html',
+            previewUrl: {
+                local: 'http://localhost:7456/web-mobile/index.html',
+            },
         },
         'web-desktop': {
             outputName: 'web-desktop',
             configPath: 'path\\to\\buildConfig_web-desktop.json',
-            previewUrl: 'http://localhost:7456/web-desktop/index.html',
+            previewUrl: {
+                local: 'http://localhost:7456/web-desktop/index.html',
+            },
         },
     },
     version: {

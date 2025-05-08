@@ -10,10 +10,13 @@ export type VersionConfig = {
 
 export type SemiverType = 'major' | 'minor' | 'patch';
 
-type PlatformConfig = {
+export type PlatformConfig = {
     configPath: string;
     outputName: string;
-    previewUrl?: string;
+    previewUrl?: {
+        local?: string;
+        remote?: string;
+    };
     publishCmd?: string;
 };
 

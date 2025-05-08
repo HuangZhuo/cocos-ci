@@ -65,26 +65,40 @@ function build(platform?: string): Promise<void> {
     });
 }
 
-function preview(platform?: string): void {
+function preview(platform?: string, isRemote = false): void {
     const config = loadConfig();
     const targetPlatform = platform || config.defaultPlatform;
     const platformConfig = config.availablePlatforms[targetPlatform];
 
     if (!platformConfig?.previewUrl) {
-        throw new Error(`平台 ${targetPlatform} 未配置previewUrl`);
+        throw new Error(`平台 ${targetPlatform} 未配置preview`);
     }
 
-    console.log(`正在打开预览: ${platformConfig.previewUrl}`);
-    exec(`start ${platformConfig.previewUrl}`);
+    const url = isRemote ? platformConfig.previewUrl.remote : platformConfig.previewUrl.local;
+    if (!url) {
+        throw new Error(`平台 ${targetPlatform} 未配置${isRemote ? '远程' : '本地'}预览URL`);
+    }
+
+    console.log(`正在打开${isRemote ? '远程' : '本地'}预览: ${url}`);
+    exec(`start ${url}`);
 }
+
+type BuildOptions = {
+    platform?: string;
+};
+
+type PreviewOptions = {
+    platform?: string;
+    remote?: boolean;
+};
 
 export const builder: ICommandHandler = {
     description: '构建Cocos Creator项目',
-    handleCommand: async (action: string, options: { platform: string }) => {
+    handleCommand: async (action: string, options: BuildOptions & PreviewOptions) => {
         if (action === 'build') {
             await build(options.platform);
         } else if (action === 'preview') {
-            preview(options.platform);
+            preview(options.platform, options.remote);
         }
     },
 };

@@ -5,9 +5,11 @@
     "availablePlatforms": {
         "web-mobile": {
             "outputName": "web-mobile",
-            "configPath": "C:\\Users\\idora\\Projects\\wm_diner\\client\\tools\\build\\buildConfig_web-mobile.json",
-            "previewUrl": "http://localhost:7456/web-mobile/web-mobile/index.html",
-            "publishCmd": "c:\\Users\\idora\\Projects\\wm_diner\\client\\tools\\release\\publish_web-mobile.bat"
+            "configPath": "...",
+            "previewUrl": {
+                "local": "http://localhost:7456/web-mobile/index.html",
+                "remote": "https://your-domain.com/web-mobile/index.html"
+            }
         },
         "web-desktop": {
             "outputName": "web-desktop",

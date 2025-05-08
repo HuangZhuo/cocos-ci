@@ -1,6 +1,6 @@
 命令行构建 Cocos Creator 项目
 
-- init 初始化配置文件
+- init 初始化生成配置文件
 - version 代码版本
     - show 显示版本
     - bump 更新版本
