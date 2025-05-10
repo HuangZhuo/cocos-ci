@@ -1,6 +1,6 @@
 import { spawn } from 'child_process';
 import { statSync } from 'fs';
-import { dirname, join } from 'path';
+import { basename, join } from 'path';
 import { builder } from './builder';
 import { confirmAction, isNativePlatform, loadBuildConfig, loadConfig, saveBuildConfig } from './common';
 import { ICommandHandler } from './types';
@@ -82,7 +82,7 @@ async function ossUpload(bucketName: string, localPath: string, remoteDir: strin
     let args: string[];
     if (stats.isDirectory()) {
         // 为文件夹在远程创建同名目录
-        remoteDir = join(remoteDir, dirname(localPath));
+        remoteDir = `${remoteDir}/${basename(localPath)}`;
         args = ['cp', '-r', localPath, `oss://${bucketName}/${remoteDir}/`, '--update'];
     } else if (stats.isFile()) {
         args = ['cp', localPath, `oss://${bucketName}/${remoteDir}/`, '--update'];
