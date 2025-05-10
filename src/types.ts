@@ -8,6 +8,18 @@ export type VersionConfig = {
     fieldPath: string;
 };
 
+export type HotUpdateConfig = {
+    // 热更新插件生成资源的路径
+    generatedAssetsPath: string;
+    ossBucketName?: string;
+};
+
+export type OopsPluginHotUpdateConfig = {
+    hotUpdateEnable: boolean;
+    hotUpdateVersion: string;
+    hotUpdateBuildNum: number;
+};
+
 export type SemiverType = 'major' | 'minor' | 'patch';
 
 export type PlatformConfig = {
@@ -26,6 +38,7 @@ export type CocosCIConfig = {
     defaultPlatform: string;
     availablePlatforms: Record<string, PlatformConfig>;
     version: VersionConfig;
+    hotupdate: HotUpdateConfig;
 };
 
 /**
@@ -33,15 +46,12 @@ export type CocosCIConfig = {
  */
 export type BuildConfig = {
     platform: BuildPlatform;
+    // 构建后生成的发布包文件夹名称
     outputName: string;
     taskName: string;
     packages: {
         // 热更新资源导出插件配置
-        ['oops-plugin-hot-update']: {
-            hotUpdateEnable: boolean;
-            hotUpdateVersion: string;
-            hotUpdateBuildNum: number;
-        };
+        ['oops-plugin-hot-update']: OopsPluginHotUpdateConfig;
     };
 };
 

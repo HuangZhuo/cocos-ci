@@ -29,6 +29,9 @@ const templateConfig: CocosCIConfig = {
         filePath: 'path\\to\\version\\config.json',
         fieldPath: 'config.version',
     },
+    hotupdate: {
+        generatedAssetsPath: 'path\\to\\hotupdate\\resources',
+    },
 };
 
 export const init: ICommandHandler = {
@@ -46,10 +49,7 @@ export const init: ICommandHandler = {
         }
         const cocosCreatorVersion = projectConfig.creator.version;
         if (cocosCreatorVersion) {
-            const versionReplacedPath = templateConfig.creatorPath.replace(
-                'x.x.x',
-                cocosCreatorVersion,
-            );
+            const versionReplacedPath = templateConfig.creatorPath.replace('x.x.x', cocosCreatorVersion);
             templateConfig.creatorPath = versionReplacedPath;
         }
 

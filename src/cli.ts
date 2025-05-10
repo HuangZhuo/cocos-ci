@@ -12,7 +12,7 @@ const packageJsonPath = join(__dirname, '..', 'package.json');
 const packageJsonContent = JSON.parse(readFileSync(packageJsonPath, 'utf8'));
 const cliVersion = packageJsonContent.version;
 
-program
+program //
     .version(cliVersion)
     .name('hot-update')
     .usage('<command> [options]')

@@ -27,5 +27,9 @@
     "version": {
         "filePath": "C:\\Users\\idora\\Projects\\wm_diner\\client\\assets\\resources\\config.json",
         "fieldPath": "config.version"
+    },
+    "hotupdate": {
+        "generatedAssetsPath": "c:\\Users\\idora\\Projects\\wm_diner\\client\\oops_framework_remote\\",
+        "ossBucketName": "game-diner"
     }
 }

@@ -1,4 +1,5 @@
 命令行构建 Cocos Creator 项目
+_Powered by Trae CN_
 
 - init 初始化生成配置文件
 - version 代码版本
@@ -10,6 +11,7 @@
 - hotupdate 热更新
     - generate 生成
     - upload 上传
+    - rollback 回滚 #todo
 
 ## Setup
 
