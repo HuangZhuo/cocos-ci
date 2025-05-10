@@ -15,6 +15,7 @@ const templateConfig: CocosCIConfig = {
             previewUrl: {
                 local: 'http://localhost:7456/web-mobile/index.html',
             },
+            publishCmd: 'echo publish web-mobile',
         },
         'web-desktop': {
             outputName: 'web-desktop',

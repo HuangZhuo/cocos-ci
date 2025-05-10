@@ -4,6 +4,7 @@ import { join } from 'path';
 import { builder } from './builder';
 import { hotupdate } from './hotupdate';
 import { init } from './init';
+import { previewer } from './preview';
 import { publisher } from './publish';
 import { version } from './version';
 
@@ -41,10 +42,10 @@ program
 // 预览
 program
     .command('preview')
-    .description('预览构建结果')
+    .description(previewer.description)
     .option('--platform <platform>', '指定预览平台', 'web-desktop')
     .option('--remote', '使用远程预览URL', false)
-    .action((options) => builder.handleCommand('preview', options));
+    .action((options) => previewer.handleCommand('preview', options));
 
 // 添加publish命令
 program
