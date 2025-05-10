@@ -36,7 +36,10 @@ export type BuildConfig = {
     outputName: string;
     taskName: string;
     packages: {
+        // 热更新资源导出插件配置
         ['oops-plugin-hot-update']: {
+            hotUpdateEnable: boolean;
+            hotUpdateVersion: string;
             hotUpdateBuildNum: number;
         };
     };
