@@ -33,7 +33,7 @@ async function generate(platform: string): Promise<void> {
     console.log(`热更新资源生成完成 ${version}`);
 }
 
-async function upload(platform: string): Promise<void> {
+async function upload(platform: string, options: HotupdateOptions): Promise<void> {
     const config = loadConfig();
     const platformConfig = config.availablePlatforms[platform];
 
@@ -49,11 +49,11 @@ async function upload(platform: string): Promise<void> {
     const oopsHotupdateConfig = buildConfig.packages['oops-plugin-hot-update'];
     const version = `${oopsHotupdateConfig.hotUpdateVersion}.${oopsHotupdateConfig.hotUpdateBuildNum}`;
 
-    if (!(await confirmAction(`是否要上传热更新资源 ${platform} ${version}?`))) {
+    if (!options.dryRun && !(await confirmAction(`是否要上传热更新资源 ${platform} ${version}?`))) {
         return;
     }
 
-    console.log(`正在为平台 ${platform} 上传热更新资源...`);
+    console.log(`正在为平台 ${platform} ${version} 上传热更新资源...`);
     const { ossBucketName, generatedAssetsPath } = config.hotupdate;
     if (!ossBucketName) {
         // 目前仅支持 OSS
@@ -65,6 +65,10 @@ async function upload(platform: string): Promise<void> {
     for (const asset of assets) {
         const localPath = join(generatedAssetsPath, platformConfig.outputName, asset);
         const remoteDir = `${platformConfig.outputName}`;
+        if (options.dryRun) {
+            console.log(`[dry-run] ${localPath} -> oss://${ossBucketName}/${remoteDir}/`);
+            continue;
+        }
         if (!(await ossUpload(ossBucketName, localPath, remoteDir))) {
             console.error(`上传 ${asset} 失败`);
             return;
@@ -116,6 +120,7 @@ async function ossUpload(bucketName: string, localPath: string, remoteDir: strin
 
 type HotupdateOptions = {
     platform: string;
+    dryRun?: boolean;
 };
 
 export const hotupdate: ICommandHandler = {
@@ -124,7 +129,7 @@ export const hotupdate: ICommandHandler = {
         if (action === 'generate') {
             await generate(options.platform);
         } else if (action === 'upload') {
-            await upload(options.platform);
+            await upload(options.platform, options);
         }
     },
 };

@@ -61,6 +61,7 @@ program
     .description('热更新管理')
     .argument('<action>', '热更新操作 (generate|upload)')
     .option('--platform <platform>', '指定平台', 'web-desktop')
+    .option('--dry-run', '不实际上传，仅打印命令', false)
     .action((action, options) => hotupdate.handleCommand(action, options));
 
 // 如果没有任何参数，则显示帮助
