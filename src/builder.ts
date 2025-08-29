@@ -8,7 +8,7 @@ import { ICommandHandler } from './types';
  * @param platform 平台名称，不传则使用默认平台
  * @returns
  */
-function build(platform?: string): Promise<void> {
+async function build(platform?: string): Promise<void> {
     const config = loadConfig();
     const targetPlatform = platform || config.defaultPlatform;
     const platformConfig = config.availablePlatforms[targetPlatform];
@@ -21,7 +21,7 @@ function build(platform?: string): Promise<void> {
         throw new Error('请先在creator-config.json中配置Cocos Creator的可执行文件路径');
     }
 
-    return new Promise((resolve, reject) => {
+    await new Promise<void>((resolve, reject) => {
         const args = [
             '--project',
             config.projectPath,

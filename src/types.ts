@@ -22,16 +22,25 @@ export type OopsPluginHotUpdateConfig = {
 
 export type SemiverType = 'major' | 'minor' | 'patch';
 
+export type CustomCommand = string;
+
 export type PlatformConfig = {
+    /** Creator 构建配置文件 */
     configPath: string;
+    /** 构建到目录 */
     outputName: string;
+    /** 构建成功后执行命令 */
+    postBuildCmd?: CustomCommand;
+    /** 预览链接 */
     previewUrl?: {
         local?: string;
         remote?: string;
     };
-    publishCmd?: string;
+    /** 发布命令 */
+    publishCmd?: CustomCommand;
 };
 
+/** cocos-ci.json */
 export type CocosCIConfig = {
     creatorPath: string;
     projectPath: string;
@@ -41,9 +50,7 @@ export type CocosCIConfig = {
     hotupdate: HotUpdateConfig;
 };
 
-/**
- * 构建发布导出的配置文件格式
- */
+/** Creator 构建发布导出的配置文件格式 */
 export type BuildConfig = {
     platform: BuildPlatform;
     // 构建后生成的发布包文件夹名称
@@ -55,8 +62,15 @@ export type BuildConfig = {
     };
 };
 
-export type BuildPlatform = 'android' | 'ios' | 'web-desktop' | 'web-mobile';
+/** Creator 构建平台 */
+export type BuildPlatform =
+    | 'android' // 安卓
+    | 'ios'
+    | 'wechatgame' // 微信小游戏
+    | 'web-mobile'
+    | 'web-desktop';
 
+/** Creator 项目内的 package.json */
 export type CocosProjectConfig = {
     name: string;
     description: string;
