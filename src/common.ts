@@ -1,20 +1,20 @@
-import { exec } from 'child_process';
-import { existsSync, readFileSync, writeFileSync } from 'fs';
+import { exec, spawn } from 'child_process';
+import { existsSync, readFileSync, statSync, writeFileSync } from 'fs';
 import { decode } from 'iconv-lite';
-import { join } from 'path/posix';
+import { basename, join } from 'path/posix';
 import { createInterface } from 'readline';
-import { BuildConfig, BuildPlatform, CocosCIConfig, CocosProjectConfig, CustomCommand } from './types';
+import { CocosBuildConfig, CocosBuildPlatform, CocosCIConfig, CocosProjectConfig, CustomCommand } from './types';
 
 export function loadConfig(): CocosCIConfig {
     const configPath = join(__dirname, '../cocos-ci.json');
     return JSON.parse(readFileSync(configPath, 'utf-8'));
 }
 
-export function loadBuildConfig(buildConfigPath: string): BuildConfig {
-    return JSON.parse(readFileSync(buildConfigPath, 'utf-8')) as BuildConfig;
+export function loadBuildConfig(buildConfigPath: string): CocosBuildConfig {
+    return JSON.parse(readFileSync(buildConfigPath, 'utf-8')) as CocosBuildConfig;
 }
 
-export function saveBuildConfig(buildConfigPath: string, config: BuildConfig): void {
+export function saveBuildConfig(buildConfigPath: string, config: CocosBuildConfig): void {
     const content = JSON.stringify(config, null, 2);
     writeFileSync(buildConfigPath, content);
 }
@@ -24,7 +24,7 @@ export function loadProjectConfig(projectPath: string): CocosProjectConfig {
     return JSON.parse(readFileSync(configPath, 'utf-8')) as CocosProjectConfig;
 }
 
-export function isNativePlatform(platform: BuildPlatform): boolean {
+export function isNativePlatform(platform: CocosBuildPlatform): boolean {
     return platform === 'android' || platform === 'ios';
 }
 
@@ -48,7 +48,7 @@ export async function confirmAction(question: string): Promise<boolean> {
     });
 }
 
-/** 执行自定义命令 */
+/** 执行自定义命令 (exec) */
 export function executeCommand(command: CustomCommand): Promise<void> {
     if (!command) {
         return Promise.reject(new Error('命令为空'));
@@ -69,6 +69,47 @@ export function executeCommand(command: CustomCommand): Promise<void> {
             const decodedStdout = decode(stdout, 'gbk');
             console.log(decodedStdout);
             resolve();
+        });
+    });
+}
+
+/**
+ * 上传文件到 OSS 并更新文件
+ * https://help.aliyun.com/zh/oss/developer-reference/upload-objects-6
+ */
+export async function ossUpload(bucketName: string, localPath: string, remoteDir: string): Promise<boolean> {
+    const stats = statSync(localPath);
+    let args: string[];
+    if (stats.isDirectory()) {
+        // 为文件夹在远程创建同名目录
+        remoteDir = `${remoteDir}/${basename(localPath)}`;
+        args = ['cp', '-r', localPath, `oss://${bucketName}/${remoteDir}/`, '--update'];
+    } else if (stats.isFile()) {
+        args = ['cp', localPath, `oss://${bucketName}/${remoteDir}/`, '--update'];
+    } else {
+        console.error('路径既不是文件也不是目录');
+        return false;
+    }
+
+    return new Promise((resolve) => {
+        const child = spawn('ossutil', args);
+
+        child.stdout.on('data', (data) => {
+            console.log(data.toString());
+        });
+
+        child.stderr.on('data', (data) => {
+            console.error(data.toString());
+        });
+
+        child.on('close', (code) => {
+            if (code !== 0) {
+                console.error(`上传失败，退出码: ${code}`);
+                resolve(false);
+            } else {
+                console.log('上传完成');
+                resolve(true);
+            }
         });
     });
 }

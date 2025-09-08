@@ -1,8 +1,8 @@
 {
     "creatorPath": "C:\\ProgramData\\cocos\\editors\\Creator\\3.8.4\\CocosCreator.exe",
     "projectPath": "C:\\Users\\idora\\Projects\\wm_diner\\client\\",
-    "defaultPlatform": "web-desktop",
-    "availablePlatforms": {
+    "defaultTarget": "web-desktop",
+    "availableTargets": {
         "web-mobile": {
             "outputName": "web-mobile",
             "configPath": "...",

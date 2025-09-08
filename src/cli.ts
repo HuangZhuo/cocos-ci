@@ -1,11 +1,11 @@
 import { program } from 'commander';
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import { builder } from './builder';
+import { builder } from './build/builder';
 import { hotupdate } from './hotupdate';
 import { init } from './init';
-import { previewer } from './preview';
-import { publisher } from './publish';
+import { previewer } from './preview/previewer';
+import { publisher } from './publish/publisher';
 import { version } from './version';
 
 const packageJsonPath = join(__dirname, '..', 'package.json');
@@ -14,7 +14,7 @@ const cliVersion = packageJsonContent.version;
 
 program //
     .version(cliVersion)
-    .name('hot-update')
+    .name('cocos-ci')
     .usage('<command> [options]')
     .description('Cocos Creator CI Tools');
 
@@ -36,14 +36,14 @@ program
 program
     .command('build')
     .description(builder.description)
-    .option('--platform <platform>', '指定构建平台', 'web-desktop')
+    .option('--target <target>', '指定构建目标', 'web-desktop')
     .action((options) => builder.handleCommand('build', options));
 
 // 预览
 program
     .command('preview')
     .description(previewer.description)
-    .option('--platform <platform>', '指定预览平台', 'web-desktop')
+    .option('--target <target>', '指定预览目标', 'web-desktop')
     .option('--remote', '使用远程预览URL', false)
     .action((options) => previewer.handleCommand('preview', options));
 
@@ -51,7 +51,7 @@ program
 program
     .command('publish')
     .description(publisher.description)
-    .option('--platform <platform>', '指定发布平台', 'web-desktop')
+    .option('--target <target>', '指定发布目标', 'web-desktop')
     .option('--dry-run', '不实际发布，仅打印命令', false)
     .action((options) => publisher.handleCommand('publish', options));
 
@@ -60,7 +60,7 @@ program
     .command('hotupdate')
     .description('热更新管理')
     .argument('<action>', '热更新操作 (generate|upload)')
-    .option('--platform <platform>', '指定平台', 'web-desktop')
+    .option('--target <target>', '指定目标', 'web-desktop')
     .option('--dry-run', '不实际上传，仅打印命令', false)
     .action((action, options) => hotupdate.handleCommand(action, options));
 

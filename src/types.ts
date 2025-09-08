@@ -24,7 +24,7 @@ export type SemiverType = 'major' | 'minor' | 'patch';
 
 export type CustomCommand = string;
 
-export type PlatformConfig = {
+export type BuildTargetConfig = {
     /** Creator 构建配置文件 */
     configPath: string;
     /** 构建到目录 */
@@ -44,15 +44,15 @@ export type PlatformConfig = {
 export type CocosCIConfig = {
     creatorPath: string;
     projectPath: string;
-    defaultPlatform: string;
-    availablePlatforms: Record<string, PlatformConfig>;
+    defaultTarget: string;
+    availableTargets: Record<string, BuildTargetConfig>;
     version: VersionConfig;
     hotupdate: HotUpdateConfig;
 };
 
 /** Creator 构建发布导出的配置文件格式 */
-export type BuildConfig = {
-    platform: BuildPlatform;
+export type CocosBuildConfig = {
+    platform: CocosBuildPlatform;
     // 构建后生成的发布包文件夹名称
     outputName: string;
     taskName: string;
@@ -63,7 +63,7 @@ export type BuildConfig = {
 };
 
 /** Creator 构建平台 */
-export type BuildPlatform =
+export type CocosBuildPlatform =
     | 'android' // 安卓
     | 'ios'
     | 'wechatgame' // 微信小游戏

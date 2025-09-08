@@ -7,8 +7,8 @@ import { CocosCIConfig, ICommandHandler } from './types';
 const templateConfig: CocosCIConfig = {
     creatorPath: 'C:\\ProgramData\\cocos\\editors\\Creator\\x.x.x\\CocosCreator.exe',
     projectPath: '.\\',
-    defaultPlatform: 'web-desktop',
-    availablePlatforms: {
+    defaultTarget: 'web-desktop',
+    availableTargets: {
         'web-mobile': {
             outputName: 'web-mobile',
             configPath: 'path\\to\\buildConfig_web-mobile.json',

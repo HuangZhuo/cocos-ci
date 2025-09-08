@@ -1,10 +1,10 @@
-import { executeCommand, loadConfig } from './common';
-import { ICommandHandler } from './types';
+import { executeCommand, loadConfig } from '../common';
+import { ICommandHandler } from '../types';
 
 async function publish(platform: string, options: PublishOptions): Promise<void> {
     try {
         const config = loadConfig();
-        const platformConfig = config.availablePlatforms[platform];
+        const platformConfig = config.availableTargets[platform];
 
         if (!platformConfig) {
             throw new Error(`不支持的平台: ${platform}`);

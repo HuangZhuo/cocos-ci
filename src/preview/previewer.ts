@@ -1,11 +1,11 @@
 import { exec } from 'child_process';
-import { loadConfig } from './common';
-import { ICommandHandler } from './types';
+import { loadConfig } from '../common';
+import { ICommandHandler } from '../types';
 
 export function preview(platform?: string, isRemote = false): void {
     const config = loadConfig();
-    const targetPlatform = platform || config.defaultPlatform;
-    const platformConfig = config.availablePlatforms[targetPlatform];
+    const targetPlatform = platform || config.defaultTarget;
+    const platformConfig = config.availableTargets[targetPlatform];
 
     if (!platformConfig?.previewUrl) {
         throw new Error(`平台 ${targetPlatform} 未配置preview`);

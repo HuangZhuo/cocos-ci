@@ -1,6 +1,6 @@
 import { spawn } from 'child_process';
-import { loadConfig } from './common';
-import { ICommandHandler } from './types';
+import { loadConfig } from '../common';
+import { ICommandHandler } from '../types';
 
 /**
  * 命令行构建Cocos Creator项目
@@ -10,8 +10,8 @@ import { ICommandHandler } from './types';
  */
 async function build(platform?: string): Promise<void> {
     const config = loadConfig();
-    const targetPlatform = platform || config.defaultPlatform;
-    const platformConfig = config.availablePlatforms[targetPlatform];
+    const targetPlatform = platform || config.defaultTarget;
+    const platformConfig = config.availableTargets[targetPlatform];
 
     if (!platformConfig) {
         throw new Error(`不支持的平台: ${targetPlatform}`);
