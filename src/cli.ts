@@ -4,6 +4,7 @@ import { join } from 'path';
 import { builder } from './build/builder';
 import { hotupdate } from './hotupdate';
 import { init } from './init';
+import { lister } from './lister';
 import { previewer } from './preview/previewer';
 import { publisher } from './publish/publisher';
 import { version } from './version';
@@ -17,6 +18,12 @@ program //
     .name('cocos-ci')
     .usage('<command> [options]')
     .description('Cocos Creator CI Tools');
+
+// 添加list命令
+program
+    .command('list')
+    .description('列出所有构建目标')
+    .action(() => lister.handleCommand('', null));
 
 // 添加init命令
 program
