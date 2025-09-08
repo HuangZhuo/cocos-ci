@@ -1,14 +1,14 @@
 import { program } from 'commander';
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import { builder } from './build/builder';
 import { addCommand } from './command';
-import { hotupdate } from './hotupdate';
-import { InitCommandHandler } from './init';
-import { ListCommandHandler } from './lister';
-import { previewer } from './preview/previewer';
-import { publisher } from './publish/publisher';
-import { VersionCommandHandler } from './version';
+import { BuildCommandHandler } from './commands/build/builder';
+import { HotUpdateCommandHandler } from './commands/hotupdate';
+import { InitCommandHandler } from './commands/init';
+import { ListCommandHandler } from './commands/list';
+import { PreviewCommandHandler } from './commands/preview/previewer';
+import { PublishCommandHandler } from './commands/publish/publisher';
+import { VersionCommandHandler } from './commands/version';
 
 const packageJsonPath = join(__dirname, '..', 'package.json');
 const packageJsonContent = JSON.parse(readFileSync(packageJsonPath, 'utf8'));
@@ -20,41 +20,14 @@ program //
     .usage('<command> [options]')
     .description('Cocos Creator CI Tools');
 
+// 使用addCommand函数添加所有命令处理器
 addCommand(program, 'list', ListCommandHandler);
 addCommand(program, 'init', InitCommandHandler);
 addCommand(program, 'version', VersionCommandHandler);
-
-// 在version命令后添加build命令
-program
-    .command('build')
-    .description(builder.description)
-    .option('--target <target>', '指定构建目标', 'web-desktop')
-    .action((options) => builder.handleCommand('build', options));
-
-// 预览
-program
-    .command('preview')
-    .description(previewer.description)
-    .option('--target <target>', '指定预览目标', 'web-desktop')
-    .option('--remote', '使用远程预览URL', false)
-    .action((options) => previewer.handleCommand('preview', options));
-
-// 添加publish命令
-program
-    .command('publish')
-    .description(publisher.description)
-    .option('--target <target>', '指定发布目标', 'web-desktop')
-    .option('--dry-run', '不实际发布，仅打印命令', false)
-    .action((options) => publisher.handleCommand('publish', options));
-
-// 添加hotupdate命令
-program
-    .command('hotupdate')
-    .description('热更新管理')
-    .argument('<action>', '热更新操作 (generate|upload)')
-    .option('--target <target>', '指定目标', 'web-desktop')
-    .option('--dry-run', '不实际上传，仅打印命令', false)
-    .action((action, options) => hotupdate.handleCommand(action, options));
+addCommand(program, 'build', BuildCommandHandler);
+addCommand(program, 'preview', PreviewCommandHandler);
+addCommand(program, 'publish', PublishCommandHandler);
+addCommand(program, 'hotupdate', HotUpdateCommandHandler);
 
 // 如果没有任何参数，则显示帮助
 if (process.argv.length < 3) {

@@ -1,8 +1,3 @@
-export interface ICommandHandler {
-    description: string;
-    handleCommand: (action: string, options: any) => void | Promise<void>;
-}
-
 export type VersionConfig = {
     filePath: string;
     fieldPath: string;

@@ -1,8 +1,8 @@
 import { Command } from 'commander';
 import { readFileSync, writeFileSync } from 'fs';
-import { CommandHandler } from './command';
-import { loadConfig } from './common';
-import { SemiverType, VersionConfig } from './types';
+import { CommandHandler } from '../command';
+import { loadConfig } from '../config-helper';
+import { SemiverType, VersionConfig } from '../types';
 
 function getVersion(config: VersionConfig): string {
     const content = JSON.parse(readFileSync(config.filePath, 'utf-8'));

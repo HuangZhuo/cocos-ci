@@ -1,9 +1,9 @@
 import { existsSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import process from 'process';
-import { CommandHandler } from './command';
-import { isCocosProjectPath, loadProjectConfig } from './common';
-import { CocosCIConfig } from './types';
+import { CommandHandler } from '../command';
+import { isCocosProjectPath, loadProjectConfig } from '../config-helper';
+import { CocosCIConfig } from '../types';
 
 const templateConfig: CocosCIConfig = {
     creatorPath: 'C:\\ProgramData\\cocos\\editors\\Creator\\x.x.x\\CocosCreator.exe',

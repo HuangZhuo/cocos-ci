@@ -1,5 +1,5 @@
-import { CommandHandler } from './command';
-import { loadConfig } from './common';
+import { CommandHandler } from '../command';
+import { loadConfig } from '../config-helper';
 
 export class ListCommandHandler extends CommandHandler {
     protected description: string = '列出所有构建目标';

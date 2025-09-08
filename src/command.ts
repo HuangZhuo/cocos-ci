@@ -17,8 +17,12 @@ export abstract class CommandHandler<TArgument = null, TOption = null> {
         program = program // for chain call
             .command(cmd)
             .description(this.description)
-            .action(async (action: TArgument, options: TOption) => {
-                await this.execute(action, options);
+            .action(async (action: TArgument | TOption, options: TOption | Command) => {
+                if (options instanceof Command) {
+                    this.execute(<TOption>action);
+                } else {
+                    this.execute(action, options);
+                }
             });
         this.initOptions?.(program);
     }
@@ -30,5 +34,5 @@ export abstract class CommandHandler<TArgument = null, TOption = null> {
     protected initOptions?(program: Command): void;
 
     /** 执行命令 */
-    abstract execute(action: TArgument, options: TOption): Promise<boolean>;
+    abstract execute(action: TArgument | TOption, options?: TOption): Promise<boolean>;
 }
