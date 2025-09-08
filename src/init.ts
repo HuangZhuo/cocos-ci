@@ -1,8 +1,9 @@
 import { existsSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import process from 'process';
+import { CommandHandler } from './command';
 import { isCocosProjectPath, loadProjectConfig } from './common';
-import { CocosCIConfig, ICommandHandler } from './types';
+import { CocosCIConfig } from './types';
 
 const templateConfig: CocosCIConfig = {
     creatorPath: 'C:\\ProgramData\\cocos\\editors\\Creator\\x.x.x\\CocosCreator.exe',
@@ -34,18 +35,19 @@ const templateConfig: CocosCIConfig = {
     },
 };
 
-export const init: ICommandHandler = {
-    description: '初始化配置文件',
-    handleCommand: () => {
+export class InitCommandHandler extends CommandHandler {
+    protected description: string = '初始化 cocos-ci 配置文件';
+
+    async execute(action: null, options: null) {
         const projectPath = process.cwd();
         if (!isCocosProjectPath(projectPath)) {
             console.error('当前目录不是Cocos Creator项目');
-            process.exit(1);
+            return false;
         }
         const projectConfig = loadProjectConfig(projectPath);
         if (!projectConfig) {
             console.error('无法加载项目配置');
-            process.exit(1);
+            return false;
         }
         const cocosCreatorVersion = projectConfig.creator.version;
         if (cocosCreatorVersion) {
@@ -56,10 +58,11 @@ export const init: ICommandHandler = {
         const configPath = join(projectPath, 'cocos-ci.json');
         if (existsSync(configPath)) {
             console.error('配置文件已存在');
-            process.exit(1);
+            return false;
         }
         writeFileSync(configPath, JSON.stringify(templateConfig, null, 4));
         console.log(`配置文件已生成: ${configPath}`);
         console.log('请根据项目实际情况修改配置');
-    },
-};
+        return true;
+    }
+}

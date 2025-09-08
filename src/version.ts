@@ -1,6 +1,8 @@
+import { Command } from 'commander';
 import { readFileSync, writeFileSync } from 'fs';
+import { CommandHandler } from './command';
 import { loadConfig } from './common';
-import { ICommandHandler, SemiverType, VersionConfig } from './types';
+import { SemiverType, VersionConfig } from './types';
 
 function getVersion(config: VersionConfig): string {
     const content = JSON.parse(readFileSync(config.filePath, 'utf-8'));
@@ -56,48 +58,64 @@ function bumpVersion(config: VersionConfig, type: SemiverType): void {
     console.log(`Version bumped from ${version} to ${newVersion}`);
 }
 
-function show() {
-    try {
-        const config = loadConfig().version;
-        const version = getVersion(config);
-        console.log(`Current version: ${version}`);
-    } catch (error: unknown) {
-        if (error instanceof Error) {
-            console.error(error?.message);
-        } else {
-            console.error('An unknown error occurred');
-        }
-        process.exit(1);
-    }
+export type VersionCommandArgument = 'show' | 'bump';
+
+class VersionCommandOptions {
+    type?: SemiverType;
 }
 
-function bump(type: SemiverType = 'patch') {
-    try {
-        if (!['major', 'minor', 'patch'].includes(type)) {
-            throw new Error('Invalid bump type. Must be one of: major, minor, patch');
-        }
+export class VersionCommandHandler extends CommandHandler<VersionCommandArgument, VersionCommandOptions> {
+    protected description: string = '源代码版本管理';
 
-        const config = loadConfig();
-        bumpVersion(config.version, type);
-    } catch (error: unknown) {
-        if (error instanceof Error) {
-            console.error(error.message);
-        } else {
-            console.error('An unknown error occurred');
+    protected initOptions(program: Command): void {
+        program
+            .argument('[action]', 'version操作 (show|bump)', 'show')
+            .option('--type <type>', '当action为bump时指定版本类型', 'patch');
+    }
+
+    async execute(action: VersionCommandArgument, options: VersionCommandOptions) {
+        switch (action) {
+            case 'bump':
+                this.bump(options.type ?? 'patch');
+                break;
+            case 'show':
+            default:
+                this.show();
+                break;
         }
-        process.exit(1);
+        return true;
+    }
+
+    private show() {
+        try {
+            const config = loadConfig().version;
+            const version = getVersion(config);
+            console.log(`Current version: ${version}`);
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                console.error(error?.message);
+            } else {
+                console.error('An unknown error occurred');
+            }
+            process.exit(1);
+        }
+    }
+
+    private bump(type: SemiverType) {
+        try {
+            if (!['major', 'minor', 'patch'].includes(type)) {
+                throw new Error('Invalid bump type. Must be one of: major, minor, patch');
+            }
+
+            const config = loadConfig();
+            bumpVersion(config.version, type);
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                console.error(error.message);
+            } else {
+                console.error('An unknown error occurred');
+            }
+            process.exit(1);
+        }
     }
 }
-
-export const version: ICommandHandler = {
-    description: '版本管理',
-    handleCommand: (action: string, options: { type?: SemiverType }) => {
-        if (action === 'show') {
-            show();
-        } else if (action === 'bump') {
-            bump(options.type ?? 'patch');
-        } else {
-            show();
-        }
-    },
-};

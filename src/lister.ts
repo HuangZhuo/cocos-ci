@@ -1,10 +1,12 @@
+import { CommandHandler } from './command';
 import { loadConfig } from './common';
-import { ICommandHandler } from './types';
 
-export const lister: ICommandHandler = {
-    description: '列出所有构建目标',
-    handleCommand: async (action, options) => {
+export class ListCommandHandler extends CommandHandler {
+    protected description: string = '列出所有构建目标';
+
+    async execute(action: null, options: null): Promise<boolean> {
         const config = loadConfig();
         console.log(Object.keys(config.availableTargets));
-    },
-};
+        return true;
+    }
+}

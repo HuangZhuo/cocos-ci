@@ -2,12 +2,13 @@ import { program } from 'commander';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import { builder } from './build/builder';
+import { addCommand } from './command';
 import { hotupdate } from './hotupdate';
-import { init } from './init';
-import { lister } from './lister';
+import { InitCommandHandler } from './init';
+import { ListCommandHandler } from './lister';
 import { previewer } from './preview/previewer';
 import { publisher } from './publish/publisher';
-import { version } from './version';
+import { VersionCommandHandler } from './version';
 
 const packageJsonPath = join(__dirname, '..', 'package.json');
 const packageJsonContent = JSON.parse(readFileSync(packageJsonPath, 'utf8'));
@@ -19,25 +20,9 @@ program //
     .usage('<command> [options]')
     .description('Cocos Creator CI Tools');
 
-// 添加list命令
-program
-    .command('list')
-    .description('列出所有构建目标')
-    .action(() => lister.handleCommand('', null));
-
-// 添加init命令
-program
-    .command('init')
-    .description('初始化cocos-ci配置文件')
-    .action(() => init.handleCommand('', null));
-
-// 添加version命令
-program
-    .command('version')
-    .description(version.description)
-    .argument('[action]', 'version操作 (show|bump)', 'show')
-    .option('--type <type>', '当action为bump时指定版本类型', 'patch')
-    .action((action, options) => version.handleCommand(action, options));
+addCommand(program, 'list', ListCommandHandler);
+addCommand(program, 'init', InitCommandHandler);
+addCommand(program, 'version', VersionCommandHandler);
 
 // 在version命令后添加build命令
 program
