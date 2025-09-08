@@ -1,12 +1,11 @@
 import { Command } from 'commander';
 import { CommandHandler } from '../../command';
-import { loadConfig } from '../../config-helper';
 import { executeCommand } from '../../exec-helper';
 
-class PublishCommandOptions {
-    target?: string;
+type PublishCommandOptions = {
+    target: string;
     dryRun?: boolean;
-}
+};
 
 export class PublishCommandHandler extends CommandHandler<string, PublishCommandOptions> {
     protected description: string = '构建并发布项目';
@@ -17,33 +16,24 @@ export class PublishCommandHandler extends CommandHandler<string, PublishCommand
             .option('--dry-run', '不实际发布，仅打印命令', false);
     }
 
-    async execute(action: string, options: PublishCommandOptions): Promise<boolean> {
-        if (action === 'publish') {
-            await this.publish(options.target || 'web-desktop', options);
-        }
+    async execute(options: PublishCommandOptions): Promise<boolean> {
+        await this.publish(options.target, options);
         return true;
     }
 
-    private async publish(platform: string, options: PublishCommandOptions): Promise<void> {
+    private async publish(target: string, options: PublishCommandOptions): Promise<void> {
         try {
-            const config = loadConfig();
-            const platformConfig = config.availableTargets[platform];
-
-            if (!platformConfig) {
-                throw new Error(`不支持的平台: ${platform}`);
-            }
-
+            const { publishCmd } = this.getTarget(target);
             // 3. 执行发布命令
-            if (!platformConfig.publishCmd) {
-                throw new Error(`平台 ${platform} 未配置publishCmd`);
+            if (!publishCmd) {
+                throw new Error(`平台 ${target} 未配置publishCmd`);
             }
-
-            console.log(`执行发布命令: ${platformConfig.publishCmd}`);
+            console.log(`执行发布命令: ${publishCmd}`);
             if (options.dryRun) {
                 console.log('这是一次模拟发布，不会实际执行任何操作。');
                 return;
             }
-            await executeCommand(platformConfig.publishCmd);
+            await executeCommand(publishCmd);
         } catch (error) {
             if (error instanceof Error) {
                 console.error('发布失败:', error.message);

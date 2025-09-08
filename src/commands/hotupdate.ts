@@ -1,17 +1,16 @@
 import { Command } from 'commander';
 import { join } from 'path';
 import { CommandHandler } from '../command';
-import { isNativePlatform, loadBuildConfig, loadConfig, saveBuildConfig } from '../config-helper';
-import { confirmAction } from '../exec-helper';
+import { isNativePlatform, loadBuildConfig, saveBuildConfig } from '../config-helper';
+import { build, confirmAction } from '../exec-helper';
 import { ossUpload } from '../oss-helper';
-import { BuildCommandHandler } from './build/builder';
 
-export type HotupdateAction = 'generate' | 'upload';
+type HotupdateAction = 'generate' | 'upload';
 
-class HotupdateCommandOptions {
-    target?: string;
+type HotupdateCommandOptions = {
+    target: string;
     dryRun?: boolean;
-}
+};
 
 export class HotUpdateCommandHandler extends CommandHandler<HotupdateAction, HotupdateCommandOptions> {
     protected description: string = '热更新管理';
@@ -24,30 +23,32 @@ export class HotUpdateCommandHandler extends CommandHandler<HotupdateAction, Hot
     }
 
     async execute(action: HotupdateAction, options: HotupdateCommandOptions): Promise<boolean> {
-        const platform = options.target || 'web-desktop';
-
-        if (action === 'generate') {
-            await this.generate(platform);
-        } else if (action === 'upload') {
-            await this.upload(platform, options);
-        } else {
-            console.error(`未知的热更新操作: ${action}`);
-            return false;
+        const target = options.target;
+        switch (action) {
+            case 'generate':
+                await this.generate(target);
+                break;
+            case 'upload':
+                await this.upload(target, options);
+                break;
+            default:
+                console.error(`未知的热更新操作: ${action}`);
+                return false;
         }
         return true;
     }
 
-    private async generate(platform: string): Promise<void> {
-        const config = loadConfig();
-        const platformConfig = config.availableTargets[platform];
+    /**
+     * 生成热更新资源
+     * @param target 目标平台
+     */
+    private async generate(target: string): Promise<void> {
+        const { creatorPath, projectPath } = this.config;
+        const { configPath, outputName } = this.getTarget(target);
 
-        if (!platformConfig) {
-            throw new Error(`不支持的平台: ${platform}`);
-        }
-
-        const buildConfig = loadBuildConfig(platformConfig.configPath);
+        const buildConfig = loadBuildConfig(configPath);
         if (!isNativePlatform(buildConfig.platform)) {
-            throw new Error(`不支持的非原生平台: ${platform}`);
+            throw new Error(`不支持的非原生平台: ${target}`);
         }
 
         const hotupdateConfig = buildConfig.packages['oops-plugin-hot-update'];
@@ -56,40 +57,39 @@ export class HotUpdateCommandHandler extends CommandHandler<HotupdateAction, Hot
         if (await confirmAction('是否要增加构建次数?')) {
             hotupdateConfig.hotUpdateBuildNum += 1;
             console.log(`更新后的构建次数: ${hotupdateConfig.hotUpdateBuildNum}`);
-            saveBuildConfig(platformConfig.configPath, buildConfig);
+            saveBuildConfig(configPath, buildConfig);
         }
         const version = `${hotupdateConfig.hotUpdateVersion}.${hotupdateConfig.hotUpdateBuildNum}`;
-        console.log(`开始构建 ${platform} 并生成热更新资源 (${version})  ...`);
+        console.log(`开始构建 ${target} 并生成热更新资源 (${version})  ...`);
 
-        // 创建BuildCommandHandler实例并调用build方法
-        const buildHandler = new BuildCommandHandler(this.program, 'build');
-        await buildHandler.execute('build', { target: platform });
+        // 生成热更新资源过程由 oops 热更新插件处理
+        await build(creatorPath, projectPath, configPath, outputName);
 
         console.log(`热更新资源生成完成 ${version}`);
     }
 
-    private async upload(platform: string, options: HotupdateCommandOptions): Promise<void> {
-        const config = loadConfig();
-        const platformConfig = config.availableTargets[platform];
-
-        if (!platformConfig) {
-            throw new Error(`不支持的平台: ${platform}`);
-        }
+    /**
+     * 上传热更新资源
+     * @param target 目标平台
+     * @param options 命令行选项
+     */
+    private async upload(target: string, options: HotupdateCommandOptions): Promise<void> {
+        const platformConfig = this.getTarget(target);
 
         const buildConfig = loadBuildConfig(platformConfig.configPath);
         if (!isNativePlatform(buildConfig.platform)) {
-            throw new Error(`不支持的非原生平台: ${platform}`);
+            throw new Error(`不支持的非原生平台: ${target}`);
         }
 
-        const oopsHotupdateConfig = buildConfig.packages['oops-plugin-hot-update'];
-        const version = `${oopsHotupdateConfig.hotUpdateVersion}.${oopsHotupdateConfig.hotUpdateBuildNum}`;
+        const { hotUpdateVersion, hotUpdateBuildNum } = buildConfig.packages['oops-plugin-hot-update'];
+        const version = `${hotUpdateVersion}.${hotUpdateBuildNum}`;
 
-        if (!options.dryRun && !(await confirmAction(`是否要上传热更新资源 ${platform} ${version}?`))) {
+        if (!options.dryRun && !(await confirmAction(`是否要上传热更新资源 ${target} ${version}?`))) {
             return;
         }
 
-        console.log(`正在为平台 ${platform} ${version} 上传热更新资源...`);
-        const { ossBucketName, generatedAssetsPath } = config.hotupdate;
+        console.log(`正在为平台 ${target} ${version} 上传热更新资源...`);
+        const { ossBucketName, generatedAssetsPath } = this.config.hotupdate;
         if (!ossBucketName) {
             // 目前仅支持 OSS
             console.error(`请先在creator-config.json中配置OSS Bucket名称`);

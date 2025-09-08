@@ -1,7 +1,6 @@
 import { Command } from 'commander';
 import { readFileSync, writeFileSync } from 'fs';
 import { CommandHandler } from '../command';
-import { loadConfig } from '../config-helper';
 import { SemiverType, VersionConfig } from '../types';
 
 function getVersion(config: VersionConfig): string {
@@ -60,9 +59,9 @@ function bumpVersion(config: VersionConfig, type: SemiverType): void {
 
 export type VersionCommandArgument = 'show' | 'bump';
 
-class VersionCommandOptions {
-    type?: SemiverType;
-}
+type VersionCommandOptions = {
+    type: SemiverType;
+};
 
 export class VersionCommandHandler extends CommandHandler<VersionCommandArgument, VersionCommandOptions> {
     protected description: string = '源代码版本管理';
@@ -76,11 +75,12 @@ export class VersionCommandHandler extends CommandHandler<VersionCommandArgument
     async execute(action: VersionCommandArgument, options: VersionCommandOptions) {
         switch (action) {
             case 'bump':
-                this.bump(options.type ?? 'patch');
+                this.bump(options.type);
                 break;
             case 'show':
-            default:
                 this.show();
+                break;
+            default:
                 break;
         }
         return true;
@@ -88,9 +88,8 @@ export class VersionCommandHandler extends CommandHandler<VersionCommandArgument
 
     private show() {
         try {
-            const config = loadConfig().version;
-            const version = getVersion(config);
-            console.log(`Current version: ${version}`);
+            const { version } = this.config;
+            console.log(`Current version: ${getVersion(version)}`);
         } catch (error: unknown) {
             if (error instanceof Error) {
                 console.error(error?.message);
@@ -106,9 +105,8 @@ export class VersionCommandHandler extends CommandHandler<VersionCommandArgument
             if (!['major', 'minor', 'patch'].includes(type)) {
                 throw new Error('Invalid bump type. Must be one of: major, minor, patch');
             }
-
-            const config = loadConfig();
-            bumpVersion(config.version, type);
+            const { version } = this.config;
+            bumpVersion(version, type);
         } catch (error: unknown) {
             if (error instanceof Error) {
                 console.error(error.message);

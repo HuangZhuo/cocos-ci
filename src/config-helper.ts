@@ -3,7 +3,7 @@ import { join } from 'path/posix';
 import { CocosBuildConfig, CocosBuildPlatform, CocosCIConfig, CocosProjectConfig } from './types';
 
 /** 加载 cocos-ci.json 配置文件 */
-export function loadConfig(): CocosCIConfig {
+export function loadConfig(): Readonly<CocosCIConfig> {
     const configPath = join(__dirname, '../cocos-ci.json');
     return JSON.parse(readFileSync(configPath, 'utf-8'));
 }
@@ -19,7 +19,7 @@ export function saveBuildConfig(buildConfigPath: string, config: CocosBuildConfi
     writeFileSync(buildConfigPath, content);
 }
 
-/** 加载 Cocos 项目配置文件 */
+/** 加载 Cocos 项目配置文件 package.json */
 export function loadProjectConfig(projectPath: string): CocosProjectConfig {
     const configPath = join(projectPath, 'package.json');
     return JSON.parse(readFileSync(configPath, 'utf-8')) as CocosProjectConfig;
