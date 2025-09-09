@@ -23,6 +23,7 @@ describe('path', () => {
     it('should get basename posix', () => {
         const path = join('build', 'wechatgame', 'remote');
         const name = basename_posix(path);
+        expect(name).not.toBe('remote');
         expect(name).toBe('build\\wechatgame\\remote');
     });
 });

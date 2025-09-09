@@ -1,8 +1,7 @@
 import { Command } from 'commander';
 import { CommandHandler } from '../../command';
 import { loadBuildConfig } from '../../config-helper';
-import { CocosBuildPlatform } from '../../types';
-import { Builder, IBuilder, WechatBuilder } from './builder';
+import { getPlatformBuilder } from './builder';
 
 type BuildCommandOptions = {
     target: string;
@@ -27,16 +26,7 @@ export class BuildCommandHandler extends CommandHandler<null, BuildCommandOption
     private async build(target: string): Promise<void> {
         const targetConfig = this.getTarget(target);
         const { platform } = loadBuildConfig(targetConfig.configPath);
-        const builder = this.getPlatformBuilder(platform);
+        const builder = getPlatformBuilder(this.config, platform);
         builder.run(targetConfig);
-    }
-
-    private getPlatformBuilder(platform: CocosBuildPlatform): IBuilder {
-        switch (platform) {
-            case 'wechatgame':
-                return new WechatBuilder(this.config);
-            default:
-                return new Builder(this.config);
-        }
     }
 }

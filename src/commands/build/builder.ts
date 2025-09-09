@@ -2,9 +2,18 @@ import path from 'path';
 import { loadBuildConfig } from '../../config-helper';
 import { ccbuild } from '../../exec-helper';
 import { ossUpload } from '../../oss-helper';
-import { BuildTargetConfig, CocosBuildConfig, CocosCIConfig } from '../../types';
+import { BuildTargetConfig, CocosBuildConfig, CocosBuildPlatform, CocosCIConfig } from '../../types';
 
-export interface IBuilder {
+export function getPlatformBuilder(config: CocosCIConfig, platform: CocosBuildPlatform): IBuilder {
+    switch (platform) {
+        case 'wechatgame':
+            return new WechatBuilder(config);
+        default:
+            return new Builder(config);
+    }
+}
+
+interface IBuilder {
     run(target: BuildTargetConfig): void;
 }
 
@@ -37,7 +46,7 @@ export class Builder implements IBuilder {
 }
 
 /** 微信小游戏构建 */
-export class WechatBuilder extends Builder {
+class WechatBuilder extends Builder {
     protected onAfterBuild(): void {
         console.log('WechatBuilder', 'onAfterBuild');
         // 将 remote 上传到 oss
