@@ -1,10 +1,13 @@
 import { existsSync, readFileSync, writeFileSync } from 'fs';
-import { join } from 'path/posix';
+import { join } from 'path';
 import { CocosBuildConfig, CocosBuildPlatform, CocosCIConfig, CocosProjectConfig } from './types';
+
+const COCOS_CI_JSON = 'cocos-ci.json';
+const DOT_CREATOR = '.creator';
 
 /** 加载 cocos-ci.json 配置文件 */
 export function loadConfig(): Readonly<CocosCIConfig> {
-    const configPath = join(__dirname, '../cocos-ci.json');
+    const configPath = COCOS_CI_JSON;
     return JSON.parse(readFileSync(configPath, 'utf-8'));
 }
 
@@ -32,7 +35,7 @@ export function isNativePlatform(platform: CocosBuildPlatform): boolean {
 
 /** 检查路径是否为 Cocos 项目路径 */
 export function isCocosProjectPath(path: string): boolean {
-    const creatorSubDir = '.creator';
+    const creatorSubDir = DOT_CREATOR;
     const fullPath = join(path, creatorSubDir);
     return existsSync(fullPath);
 }

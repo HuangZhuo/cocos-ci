@@ -1,6 +1,6 @@
 import { spawn } from 'child_process';
 import { statSync } from 'fs';
-import { basename } from 'path/posix';
+import path from 'path';
 
 /**
  * 上传文件到 OSS 并更新文件
@@ -11,7 +11,7 @@ export async function ossUpload(bucketName: string, localPath: string, remoteDir
     let args: string[];
     if (stats.isDirectory()) {
         // 为文件夹在远程创建同名目录
-        remoteDir = `${remoteDir}/${basename(localPath)}`;
+        remoteDir = `${remoteDir}/${path.basename(localPath)}`;
         args = ['cp', '-r', localPath, `oss://${bucketName}/${remoteDir}/`, '--update'];
     } else if (stats.isFile()) {
         args = ['cp', localPath, `oss://${bucketName}/${remoteDir}/`, '--update'];
