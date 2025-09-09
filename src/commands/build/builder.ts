@@ -39,6 +39,7 @@ export class Builder implements IBuilder {
 /** 微信小游戏构建 */
 export class WechatBuilder extends Builder {
     protected onAfterBuild(): void {
+        console.log('WechatBuilder', 'onAfterBuild');
         // 将 remote 上传到 oss
         const {
             projectPath,

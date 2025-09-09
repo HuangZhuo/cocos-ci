@@ -5,9 +5,16 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
-    "rootDir": "./src",
+    "rootDir": ".",
     "outDir": "./dist",
     "skipLibCheck": true,
     "noEmit": true, // 添加这行，因为esbuild会处理输出
-  }
+  },
+  "include": [
+    "src/**/*",
+    "__test__/**/*"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

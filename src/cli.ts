@@ -2,12 +2,12 @@ import { program } from 'commander';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import { addCommand } from './command';
-import { BuildCommandHandler } from './commands/build/builder';
+import { BuildCommandHandler } from './commands/build';
 import { HotUpdateCommandHandler } from './commands/hotupdate';
 import { InitCommandHandler } from './commands/init';
 import { ListCommandHandler } from './commands/list';
-import { PreviewCommandHandler } from './commands/preview/previewer';
-import { PublishCommandHandler } from './commands/publish/publisher';
+import { PreviewCommandHandler } from './commands/preview';
+import { PublishCommandHandler } from './commands/publish';
 import { VersionCommandHandler } from './commands/version';
 
 const packageJsonPath = join(__dirname, '..', 'package.json');
