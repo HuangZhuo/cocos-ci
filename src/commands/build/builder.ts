@@ -1,31 +1,52 @@
-import { Command } from 'commander';
-import { CommandHandler } from '../../command';
-import { build } from '../../exec-helper';
+import path from 'path';
+import { loadBuildConfig } from '../../config-helper';
+import { ccbuild } from '../../exec-helper';
+import { ossUpload } from '../../oss-helper';
+import { BuildTargetConfig, CocosBuildConfig, CocosCIConfig } from '../../types';
 
-type BuildCommandOptions = {
-    target: string;
-};
+export interface IBuilder {
+    run(target: BuildTargetConfig): void;
+}
 
-export class BuildCommandHandler extends CommandHandler<string, BuildCommandOptions> {
-    protected description: string = '构建Cocos Creator项目';
+/** 常规构建 */
+export class Builder implements IBuilder {
+    protected targetConfig: BuildTargetConfig = null!;
+    protected buildConfig: CocosBuildConfig = null!;
 
-    protected initOptions(program: Command): void {
-        program.option('--target <target>', '指定构建目标', 'web-desktop');
+    constructor(protected config: CocosCIConfig) {}
+
+    async run(target: BuildTargetConfig) {
+        this.targetConfig = target;
+        this.buildConfig = loadBuildConfig(target.configPath);
+        this.onBeforeBuild?.();
+        await this.build(target);
+        this.onAfterBuild?.();
     }
 
-    async execute(options: BuildCommandOptions): Promise<boolean> {
-        await this.build(options.target);
-        return true;
-    }
-
-    /**
-     * @param target 目标名称
-     * @returns
-     */
-    private async build(target: string): Promise<void> {
+    /** 使用 Cocos Creator 构建项目 */
+    protected async build({ configPath, outputName }: BuildTargetConfig) {
         const { creatorPath, projectPath } = this.config;
-        const { configPath, outputName } = this.getTarget(target);
+        await ccbuild(creatorPath, projectPath, configPath, outputName);
+    }
 
-        await build(creatorPath, projectPath, configPath, outputName);
+    /** 开始构建前 */
+    protected onBeforeBuild?(): void;
+
+    /** 构建完成后 */
+    protected onAfterBuild?(): void;
+}
+
+/** 微信小游戏构建 */
+export class WechatBuilder extends Builder {
+    protected onAfterBuild(): void {
+        // 将 remote 上传到 oss
+        const {
+            projectPath,
+            hotupdate: { ossBucketName },
+        } = this.config;
+        const { outputName } = this.targetConfig;
+        const buildPath = path.join(projectPath, 'build', outputName);
+        const remoteAssetsPath = path.join(buildPath, 'remote');
+        ossUpload(ossBucketName!, remoteAssetsPath, outputName);
     }
 }

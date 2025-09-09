@@ -50,7 +50,7 @@ export function executeCommand(command: CustomCommand): Promise<void> {
  * @param outputName 输出文件名
  * @returns
  */
-export function build(
+export function ccbuild(
     creatorPath: string, //
     projectPath: string,
     configPath: string,

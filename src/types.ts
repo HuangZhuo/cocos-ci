@@ -48,10 +48,16 @@ export type CocosCIConfig = {
 /** Creator 构建发布导出的配置文件格式 */
 export type CocosBuildConfig = {
     platform: CocosBuildPlatform;
+    // 构建输出目录
+    buildPath: string;
     // 构建后生成的发布包文件夹名称
     outputName: string;
     taskName: string;
     packages: {
+        // 微信小游戏
+        wechatgame: {
+            appid: string;
+        };
         // 热更新资源导出插件配置
         ['oops-plugin-hot-update']: OopsPluginHotUpdateConfig;
     };
@@ -74,4 +80,5 @@ export type CocosProjectConfig = {
     };
 };
 
+/** 构建器构造函数类型 */
 export type Ctor<T> = new (...args: any[]) => T;

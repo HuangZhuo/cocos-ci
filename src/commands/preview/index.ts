@@ -10,9 +10,9 @@ type PreviewCommandOptions = {
 export class PreviewCommandHandler extends CommandHandler<string, PreviewCommandOptions> {
     protected description: string = '预览构建结果';
 
-    protected initOptions(program: Command): void {
+    protected initArgumentAndOptions(program: Command): void {
         program //
-            .option('--target <target>', '指定预览目标', 'web-desktop')
+            .option('--target <target>', '指定预览目标')
             .option('--remote', '使用远程预览URL', false);
     }
 

@@ -2,7 +2,7 @@ import { Command } from 'commander';
 import { join } from 'path';
 import { CommandHandler } from '../command';
 import { isNativePlatform, loadBuildConfig, saveBuildConfig } from '../config-helper';
-import { build, confirmAction } from '../exec-helper';
+import { ccbuild, confirmAction } from '../exec-helper';
 import { ossUpload } from '../oss-helper';
 
 type HotupdateAction = 'generate' | 'upload';
@@ -15,7 +15,7 @@ type HotupdateCommandOptions = {
 export class HotUpdateCommandHandler extends CommandHandler<HotupdateAction, HotupdateCommandOptions> {
     protected description: string = '热更新管理';
 
-    protected initOptions(program: Command): void {
+    protected initArgumentAndOptions(program: Command): void {
         program
             .argument('<action>', '热更新操作 (generate|upload)')
             .option('--target <target>', '指定目标', 'web-desktop')
@@ -63,7 +63,7 @@ export class HotUpdateCommandHandler extends CommandHandler<HotupdateAction, Hot
         console.log(`开始构建 ${target} 并生成热更新资源 (${version})  ...`);
 
         // 生成热更新资源过程由 oops 热更新插件处理
-        await build(creatorPath, projectPath, configPath, outputName);
+        await ccbuild(creatorPath, projectPath, configPath, outputName);
 
         console.log(`热更新资源生成完成 ${version}`);
     }

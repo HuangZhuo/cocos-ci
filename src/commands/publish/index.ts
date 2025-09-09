@@ -10,7 +10,7 @@ type PublishCommandOptions = {
 export class PublishCommandHandler extends CommandHandler<string, PublishCommandOptions> {
     protected description: string = '构建并发布项目';
 
-    protected initOptions(program: Command): void {
+    protected initArgumentAndOptions(program: Command): void {
         program
             .option('--target <target>', '指定发布目标', 'web-desktop')
             .option('--dry-run', '不实际发布，仅打印命令', false);

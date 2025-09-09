@@ -66,7 +66,7 @@ type VersionCommandOptions = {
 export class VersionCommandHandler extends CommandHandler<VersionCommandArgument, VersionCommandOptions> {
     protected description: string = '源代码版本管理';
 
-    protected initOptions(program: Command): void {
+    protected initArgumentAndOptions(program: Command): void {
         program
             .argument('[action]', 'version操作 (show|bump)', 'show')
             .option('--type <type>', '当action为bump时指定版本类型', 'patch');

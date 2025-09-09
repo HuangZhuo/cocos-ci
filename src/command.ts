@@ -28,14 +28,14 @@ export abstract class CommandHandler<TArgument = null, TOption = null> {
                     this.execute(action, options);
                 }
             });
-        this.initOptions?.(program);
+        this.initArgumentAndOptions?.(program);
     }
 
     /** 命令描述 */
     protected description: string = '';
 
     /** 初始化选项 */
-    protected initOptions?(program: Command): void;
+    protected initArgumentAndOptions?(program: Command): void;
 
     /** 加载目标配置 */
     protected getTarget(targetName: string): BuildTargetConfig {
