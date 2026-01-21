@@ -1,4 +1,5 @@
 import { Command } from 'commander';
+import { existsSync } from 'fs';
 import { join } from 'path';
 import { CommandHandler } from '../command';
 import { isNativePlatform, loadBuildConfig, saveBuildConfig } from '../config-helper';
@@ -95,11 +96,25 @@ export class HotUpdateCommandHandler extends CommandHandler<HotupdateAction, Hot
             console.error(`请先在creator-config.json中配置OSS Bucket名称`);
             return;
         }
+
+        let outputName = platformConfig.outputName;
+        // 检查生成资源目录是否存在，否则退化到 buildConfig.platform
+        if (!existsSync(join(generatedAssetsPath, outputName))) {
+            if (!(await confirmAction(`生成资源目录不存在: ${outputName} 是否尝试使用 ${buildConfig.platform}?`))) {
+                return;
+            }
+            outputName = buildConfig.platform;
+        }
+        if (!existsSync(join(generatedAssetsPath, outputName))) {
+            console.error(`生成资源目录不存在: ${outputName}`);
+            return;
+        }
+
         // 这里需要按顺序依次上传，确保失败后可以回滚
         const assets = [version, 'project.manifest', 'version.manifest'];
         for (const asset of assets) {
-            const localPath = join(generatedAssetsPath, platformConfig.outputName, asset);
-            const remoteDir = `${platformConfig.outputName}`;
+            const localPath = join(generatedAssetsPath, outputName, asset);
+            const remoteDir = `${outputName}`;
             if (options.dryRun) {
                 console.log(`[dry-run] ${localPath} -> oss://${ossBucketName}/${remoteDir}/`);
                 continue;

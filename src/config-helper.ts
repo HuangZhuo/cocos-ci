@@ -30,7 +30,7 @@ export function loadProjectConfig(projectPath: string): CocosProjectConfig {
 
 /** 检查平台是否为原生平台 */
 export function isNativePlatform(platform: CocosBuildPlatform): boolean {
-    return platform === 'android' || platform === 'ios';
+    return platform === 'android' || platform === 'ios' || platform === 'google-play';
 }
 
 /** 检查路径是否为 Cocos 项目路径 */
