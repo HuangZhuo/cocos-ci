@@ -12,7 +12,7 @@ export function addCommand<TArgument = null, TOption = null>(
 
 export abstract class CommandHandler<TArgument = null, TOption = null> {
     /** cocos-ci 配置 */
-    private static Config = loadConfig();
+    private static Config: CocosCIConfig | undefined;
 
     constructor(
         protected program: Command,
@@ -39,7 +39,7 @@ export abstract class CommandHandler<TArgument = null, TOption = null> {
 
     /** 加载目标配置 */
     protected getTarget(targetName: string): BuildTargetConfig {
-        const { availableTargets } = CommandHandler.Config;
+        const { availableTargets } = this.config;
         const target = availableTargets[targetName];
         if (!target) {
             throw new Error(`目标 ${targetName} 未配置`);
@@ -49,12 +49,12 @@ export abstract class CommandHandler<TArgument = null, TOption = null> {
 
     /** 默认目标 */
     protected get defaultTarget(): string {
-        return CommandHandler.Config.defaultTarget;
+        return this.config.defaultTarget;
     }
 
     /** cocos-ci 配置 */
     protected get config(): CocosCIConfig {
-        return CommandHandler.Config;
+        return (CommandHandler.Config ??= loadConfig());
     }
 
     /** 执行命令 */

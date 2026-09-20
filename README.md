@@ -25,13 +25,13 @@ npm link
 
 ## Usage
 
-在含有 `cocos-ci.json` 的目录执行，默认使用配置中的 `creatorPath` 和 `projectPath`：
+在 Cocos 项目目录执行即可，无需 `cocos-ci.json`。Windows 下会按项目 `package.json` 中的 `creator.version` 查找 `%ProgramData%\cocos\editors\Creator\<version>\CocosCreator.exe`。如果当前目录有 `cocos-ci.json`，优先使用其中的 `creatorPath` 和 `projectPath`：
 
 ```bash
 cocos-ci open
 ```
 
-也可以临时覆盖路径（仍需当前目录存在 `cocos-ci.json`）：
+也可以临时覆盖路径；编辑器安装在其他位置时使用 `--editor`：
 
 ```powershell
 cocos-ci open --project "C:\Users\idora\Projects\wm_diner\client" --editor "C:\ProgramData\cocos\editors\Creator\3.8.7\CocosCreator.exe"

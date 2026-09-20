@@ -26,6 +26,7 @@ describe('open', () => {
         editor = join(root, 'editor with spaces.exe');
         mkdirSync(join(project, '.creator'), { recursive: true });
         writeFileSync(editor, '');
+        jest.spyOn(process, 'cwd').mockReturnValue(project);
         handler = new OpenCommandHandler(new Command(), 'open');
         child = Object.assign(new EventEmitter(), { unref: jest.fn() });
         mockSpawn.mockImplementation(() => {
@@ -53,6 +54,7 @@ describe('open', () => {
     });
 
     it('uses configured paths when overrides are omitted', async () => {
+        writeFileSync(join(project, 'cocos-ci.json'), '{}');
         jest.spyOn(handler as any, 'config', 'get').mockReturnValue({
             projectPath: project,
             creatorPath: editor,
@@ -60,6 +62,33 @@ describe('open', () => {
         await expect(handler.execute({})).resolves.toBe(true);
         expect(mockSpawn.mock.calls[0][0]).toBe(resolve(editor));
         expect(mockSpawn.mock.calls[0][1]).toEqual(['--project', resolve(project), '--nologin']);
+    });
+
+    it('opens the current project without a CI config when an editor is specified', async () => {
+        const config = jest.spyOn(handler as any, 'config', 'get');
+        await expect(handler.execute({ editor })).resolves.toBe(true);
+        expect(config).not.toHaveBeenCalled();
+        expect(mockSpawn.mock.calls[0][1]).toEqual(['--project', project, '--nologin']);
+    });
+
+    (process.platform === 'win32' ? it : it.skip)('finds the matching editor without a CI config', async () => {
+        writeFileSync(join(project, 'package.json'), JSON.stringify({ creator: { version: '3.8.7' } }));
+        const autoEditor = join(root, 'cocos', 'editors', 'Creator', '3.8.7', 'CocosCreator.exe');
+        mkdirSync(join(root, 'cocos', 'editors', 'Creator', '3.8.7'), { recursive: true });
+        writeFileSync(autoEditor, '');
+        jest.replaceProperty(process, 'env', { ...process.env, ProgramData: root });
+        await expect(handler.execute({})).resolves.toBe(true);
+        expect(mockSpawn.mock.calls[0][0]).toBe(autoEditor);
+        expect(mockSpawn.mock.calls[0][1]).toEqual(['--project', project, '--nologin']);
+    });
+
+    it('asks for an editor when the project has no editor version', async () => {
+        writeFileSync(join(project, 'package.json'), '{}');
+        await expect(handler.execute({})).resolves.toBe(false);
+        expect(mockSpawn).not.toHaveBeenCalled();
+        expect(console.error).toHaveBeenCalledWith('打开项目失败:', expect.objectContaining({
+            message: expect.stringContaining('--editor'),
+        }));
     });
 
     it('rejects directories without a Cocos project marker', async () => {

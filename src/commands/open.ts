@@ -1,9 +1,9 @@
 import { spawn } from 'child_process';
 import { Command } from 'commander';
-import { statSync } from 'fs';
-import { resolve } from 'path';
+import { existsSync, statSync } from 'fs';
+import { join, resolve } from 'path';
 import { CommandHandler } from '../command';
-import { isCocosProjectPath } from '../config-helper';
+import { isCocosProjectPath, loadProjectConfig } from '../config-helper';
 
 type OpenCommandOptions = {
     project?: string;
@@ -16,16 +16,35 @@ export class OpenCommandHandler extends CommandHandler<null, OpenCommandOptions>
     protected initArgumentAndOptions(program: Command): void {
         program //
             .description('直接打开 Cocos Creator 项目（跳过 Dashboard 和登录）')
-            .option('--project <path>', '覆盖配置中的项目路径')
-            .option('--editor <path>', '覆盖配置中的编辑器可执行文件路径');
+            .option('--project <path>', '项目路径，默认使用配置或当前目录')
+            .option('--editor <path>', '编辑器路径，默认使用配置或按项目版本查找');
     }
 
     async execute(options: OpenCommandOptions): Promise<boolean> {
         try {
-            const projectPath = resolve(options.project ?? this.config.projectPath);
-            const editorPath = resolve(options.editor ?? this.config.creatorPath);
+            const config = existsSync(resolve(process.cwd(), 'cocos-ci.json')) ? this.config : undefined;
+            const projectPath = resolve(options.project ?? config?.projectPath ?? process.cwd());
             if (!statSync(projectPath).isDirectory() || !isCocosProjectPath(projectPath)) {
                 throw new Error(`无效的 Cocos 项目路径: ${projectPath}`);
+            }
+            let editor = options.editor ?? config?.creatorPath;
+            if (!editor) {
+                const version = loadProjectConfig(projectPath).creator?.version;
+                if (process.platform !== 'win32' || !version || !/^\d+\.\d+\.\d+[\w.-]*$/.test(version)) {
+                    throw new Error('无法自动确定编辑器路径，请使用 --editor 指定');
+                }
+                editor = join(
+                    process.env.ProgramData || 'C:\\ProgramData',
+                    'cocos',
+                    'editors',
+                    'Creator',
+                    version,
+                    'CocosCreator.exe',
+                );
+            }
+            const editorPath = resolve(editor);
+            if (!existsSync(editorPath)) {
+                throw new Error(`找不到编辑器: ${editorPath}，请使用 --editor 指定`);
             }
             if (!statSync(editorPath).isFile()) {
                 throw new Error(`编辑器路径不是文件: ${editorPath}`);
